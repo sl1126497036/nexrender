@@ -1,19 +1,20 @@
-const fs      = require('fs')
-const path    = require('path')
-const {name}  = require('./package.json')
-const {spawn} = require('child_process')
+const fs = require('fs')
+const path = require('path')
+    //const ffmpegpath = require('ffmpeg-static')
+const { name } = require('./package.json')
+const { spawn } = require('child_process')
 
 // TODO: make it work
 /* make sure pkg will pick up only needed binaries */
 const binaries = {
     'darwin': [
-        path.join(__dirname, 'node_modules/ffmpeg-static/bin/darwin/x64/ffmpeg'),
-        path.join(__dirname, '../../ffmpeg-static/bin/darwin/x64/ffmpeg'),
-    ], 
+        path.join(__dirname, 'node_modules/ffmpeg-static/ffmpeg'),
+        path.join(__dirname, '../../ffmpeg-static/ffmpeg'),
+    ],
     'win32': [
-        path.join(__dirname, 'node_modules/ffmpeg-static/bin/win32/x64/ffmpeg.exe'),
-        path.join(__dirname, '../../ffmpeg-static/bin/win32/x64/ffmpeg.exe'),
-    ] 
+        path.join(__dirname, 'node_modules/ffmpeg-static/ffmpeg.exe'),
+        path.join(__dirname, '../../ffmpeg-static/ffmpeg.exe'),
+    ]
 }
 
 // /snapshot/nexrender/packages/nexrender-cli/node_modules/@nexrender/core/node_modules/@nexrender/action-encode/node_modules/ffmpeg-static/bin/darwin/x64/ffmpeg
@@ -21,14 +22,14 @@ const binaries = {
 const getBinary = (job, settings) => {
     return new Promise((resolve, reject) => {
         if (process.pkg) {
-            const output = path.join(job.workpath, process.platform == 'win32' ? 'ffmpeg.exe' : 'ffmpeg')
+            const output = path.join(job.workpath, process.platform === 'win32' ? 'ffmpeg.exe' : 'ffmpeg')
 
             if (fs.existsSync(output)) {
                 return resolve(output);
             }
 
             const binpath = binaries[process.platform].filter(file => fs.existsSync(file))[0]
-            const rd = fs.createReadStream(binpath)              
+            const rd = fs.createReadStream(binpath)
             const wr = fs.createWriteStream(output)
 
             const handleError = err => {
@@ -64,7 +65,7 @@ const constructParams = (job, settings, { preset, input, output, params }) => {
     settings.logger.log(`[${job.uid}] action-encode: input file ${input}`)
     settings.logger.log(`[${job.uid}] action-encode: output file ${output}`)
 
-    switch(preset) {
+    switch (preset) {
         case 'mp4':
             params = Object.assign({}, {
                 '-i': input,
@@ -73,11 +74,11 @@ const constructParams = (job, settings, { preset, input, output, params }) => {
                 '-ar': '44100',
                 '-vcodec': 'libx264',
                 '-r': '25',
-                '-pix_fmt' : 'yuv420p',
+                '-pix_fmt': 'yuv420p',
             }, params, {
-              '-y': output
+                '-y': output
             });
-        break;
+            break;
 
         case 'ogg':
             params = Object.assign({}, {
@@ -90,7 +91,7 @@ const constructParams = (job, settings, { preset, input, output, params }) => {
             }, params, {
                 '-y': output
             });
-        break;
+            break;
 
         case 'webm':
             params = Object.assign({}, {
@@ -104,7 +105,7 @@ const constructParams = (job, settings, { preset, input, output, params }) => {
             }, params, {
                 '-y': output
             });
-        break;
+            break;
 
         case 'mp3':
             params = Object.assign({}, {
@@ -115,7 +116,7 @@ const constructParams = (job, settings, { preset, input, output, params }) => {
             }, params, {
                 '-y': output
             });
-        break;
+            break;
 
         case 'm4a':
             params = Object.assign({}, {
@@ -127,7 +128,7 @@ const constructParams = (job, settings, { preset, input, output, params }) => {
             }, params, {
                 '-y': output
             });
-        break;
+            break;
 
         default:
             params = Object.assign({}, {
@@ -135,7 +136,7 @@ const constructParams = (job, settings, { preset, input, output, params }) => {
             }, params, {
                 '-y': output
             });
-        break;
+            break;
     }
 
     /* convert to plain array */
@@ -155,13 +156,11 @@ module.exports = (job, settings, options, type) => {
             instance.on('error', err => reject(new Error(`Error starting ffmpeg process: ${err}`)));
             instance.stderr.on('data', (data) => settings.logger.log(`[${job.uid}] ${data.toString()}`));
             instance.stdout.on('data', (data) => settings.debug && settings.logger.log(`[${job.uid}] ${data.toString()}`));
-
             /* on finish (code 0 - success, other - error) */
             instance.on('close', (code) => {
                 if (code !== 0) {
                     return reject(new Error('Error in action-encode module (ffmpeg) code : ' + code))
                 }
-
                 resolve(job)
             });
         }).catch(e => {

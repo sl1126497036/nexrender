@@ -1,7 +1,7 @@
 const fs = require('fs')
 const path = require('path')
-const {spawn} = require('child_process')
-const {expandEnvironmentVariables} = require('../helpers/path')
+const { spawn } = require('child_process')
+const { expandEnvironmentVariables } = require('../helpers/path')
 
 const progressRegex = /([\d]{1,2}:[\d]{2}:[\d]{2}:[\d]{2})\s+(\(\d+\))/gi;
 const durationRegex = /Duration:\s+([\d]{1,2}:[\d]{2}:[\d]{2}:[\d]{2})/gi;
@@ -30,7 +30,7 @@ module.exports = (job, settings) => {
     params.push('-project', expandEnvironmentVariables(job.template.dest));
     params.push('-comp', job.template.composition);
 
-    if (!settings.skipRender){
+    if (!settings.skipRender) {
         params.push('-output', outputFile);
 
         option(params, '-OMtemplate', job.template.outputModule);
@@ -117,7 +117,6 @@ module.exports = (job, settings) => {
             output.push(data.toString('utf8'));
             (settings.verbose && settings.logger.log(data.toString('utf8')));
         });
-
         /* on finish (code 0 - success, other - error) */
         instance.on('close', (code) => {
 
@@ -163,4 +162,3 @@ module.exports = (job, settings) => {
         });
     })
 };
-

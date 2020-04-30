@@ -1,50 +1,28 @@
 {
-  "template": {
-    "src": "file:///Users/inlife/Downloads/nexrender-boilerplate-master/assets/nm05ae12.aepx",
-    "composition": "main",
-    "frameStart": 0,
-    "frameEnd": 200
-  },
-  "assets": [
-    {
-      "src": "file:///Users/inlife/Downloads/nexrender-boilerplate-master/assets/2016-aug-deep.jpg",
-      "type": "image",
-      "layerName": "background.jpg"
+    "actions": {
+        "postrender": [{
+                "module": "@nexrender/action-encode",
+                "output": "result.mp4",
+                "preset": "mp4"
+            },
+            {
+                "module": "@nexrender/action-copy",
+                "input": "result.mp4",
+                "output": "Users/perez/Desktop/AE/AudioTest/output/result.mp4"
+            }
+        ]
     },
-    {
-      "src": "file:///Users/inlife/Downloads/nexrender-boilerplate-master/assets/nm.png",
-      "type": "image",
-      "layerName": "nm.png"
-    },
-    {
-      "src": "file:///Users/inlife/Downloads/nexrender-boilerplate-master/assets/deep_60s.mp3",
-      "type": "audio",
-      "layerName": "audio.mp3"
-    },
-    {
-      "type": "data",
-      "layerName": "artist",
-      "property": "position",
-      "value": [
-        0,
-        250
-      ],
-      "expression": "[5 * time, 250]"
-    },
-    {
-      "type": "data",
-      "layerName": "track name",
-      "property": "Source Text",
-      "value": "Привет мир"
+    "assets": [{
+        "composition": "Final Comp",
+        "layerName": "music",
+        "src": "file:///Users/perez/Desktop/AE/AudioTest/test.mp3",
+        "type": "audio"
+    }],
+    "template": {
+        "composition": "Final Comp",
+        "frameEnd": 80,
+        "frameStart": 0,
+        "settingsTemplate": "preview",
+        "src": "file:///Users/perez/Desktop/AE/AudioTest/test.aep"
     }
-  ],
-  "actions": {
-    "postrender": [
-      {
-        "module": "@nexrender/action-encode",
-        "output": "output.mp4",
-        "preset": "mp4"
-      }
-    ]
-  }
 }

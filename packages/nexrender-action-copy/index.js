@@ -1,5 +1,5 @@
 const fs = require('fs')
-const {name} = require('./package.json')
+const { name } = require('./package.json')
 const path = require('path')
 
 module.exports = (job, settings, { input, output }, type) => {
@@ -19,9 +19,15 @@ module.exports = (job, settings, { input, output }, type) => {
         output = path.join(output, path.basename(input));
     }
 
+    if (!fs.existsSync(path.dirname(output))) {
+        fs.mkdirSync(path.dirname(output))
+    }
+
     /* plain asset stream copy */
     const rd = fs.createReadStream(input)
     const wr = fs.createWriteStream(output)
+
+
 
     return new Promise(function(resolve, reject) {
         rd.on('error', reject)

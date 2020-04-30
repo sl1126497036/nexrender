@@ -1,48 +1,48 @@
 #!/usr/bin/env node
 
-const fs               = require('fs')
-const arg              = require('arg')
-const chalk            = require('chalk')
-const {version}        = require('../package.json')
+const fs = require('fs')
+const arg = require('arg')
+const chalk = require('chalk')
+const { version } = require('../package.json')
 const { init, render } = require('@nexrender/core')
 
 const args = arg({
     // Types
-    '--help':       Boolean,
-    '--version':    Boolean,
-    '--cleanup':    Boolean,
+    '--help': Boolean,
+    '--version': Boolean,
+    '--cleanup': Boolean,
 
-    '--file':       String,
-    '--binary':     String,
-    '--workpath':   String,
+    '--file': String,
+    '--binary': String,
+    '--workpath': String,
 
-    '--stop-on-error':  String,
+    '--stop-on-error': String,
 
-    '--skip-cleanup':   Boolean,
-    '--skip-render':    Boolean,
-    '--no-license':     Boolean,
-    '--force-patch':    Boolean,
-    '--debug':          Boolean,
-    '--multi-frames':   Boolean,
-    '--reuse':          Boolean,
+    '--skip-cleanup': Boolean,
+    '--skip-render': Boolean,
+    '--no-license': Boolean,
+    '--force-patch': Boolean,
+    '--debug': Boolean,
+    '--multi-frames': Boolean,
+    '--reuse': Boolean,
 
-    '--max-memory-percent':  Number,
+    '--max-memory-percent': Number,
     '--image-cache-percent': Number,
 
     // Aliases
-    '-v':           '--version',
-    '-c':           '--cleanup',
-    '-h':           '--help',
-    '-f':           '--file',
-    '-b':           '--binary',
-    '-w':           '--workpath',
+    '-v': '--version',
+    '-c': '--cleanup',
+    '-h': '--help',
+    '-f': '--file',
+    '-b': '--binary',
+    '-w': '--workpath',
 });
 
 let serverHost = 'http://localhost:3000';
 let serverSecret = '';
 
 if (args['--help']) {
-    console.error(chalk`
+    console.error(chalk `
   {bold.cyan nexrender-cli} - nexrender standalone renderer
   {bold.cyan version} - v${version}
 
@@ -126,25 +126,27 @@ if (args['--version']) {
     process.exit();
 }
 
-console.log(chalk`> starting {bold.cyan nexrender-cli}`)
+console.log(chalk `> starting {bold.cyan nexrender-cli}`)
 
 let settings = {};
-const opt = (key, arg) => {if (args[arg]) {
-    settings[key] = args[arg];
-}}
+const opt = (key, arg) => {
+    if (args[arg]) {
+        settings[key] = args[arg];
+    }
+}
 
-opt('binary',               '--binary');
-opt('workpath',             '--workpath');
-opt('no-license',           '--no-license');
-opt('skipCleanup',          '--skip-cleanup');
-opt('skipRender',           '--skip-render');
-opt('forceCommandLinePatch','--force-patch');
-opt('debug',                '--debug');
-opt('multiFrames',          '--multi-frames');
-opt('reuse',                '--reuse');
-opt('stopOnError',          '--stop-on-error');
-opt('maxMemoryPercent',     '--max-memory-percent');
-opt('imageCachePercent',    '--image-cache-percent');
+opt('binary', '--binary');
+opt('workpath', '--workpath');
+opt('no-license', '--no-license');
+opt('skipCleanup', '--skip-cleanup');
+opt('skipRender', '--skip-render');
+opt('forceCommandLinePatch', '--force-patch');
+opt('debug', '--debug');
+opt('multiFrames', '--multi-frames');
+opt('reuse', '--reuse');
+opt('stopOnError', '--stop-on-error');
+opt('maxMemoryPercent', '--max-memory-percent');
+opt('imageCachePercent', '--image-cache-percent');
 
 /* convert string arugument into a boolean */
 settings['stopOnError'] = settings['stopOnError'] == 'true';
@@ -161,7 +163,7 @@ if (args['--cleanup']) {
 
     console.log('> running cleanup for a folder:', settings.workpath)
 
-    const {rmdirr} = require('@nexrender/core/src/tasks/cleanup')
+    const { rmdirr } = require('@nexrender/core/src/tasks/cleanup')
 
     /* run recursive rmdir */
     rmdirr(settings.workpath)
@@ -171,9 +173,8 @@ if (args['--cleanup']) {
 }
 
 let json;
-
 if (args['--file']) {
-    json = fs.readFileSync(args['--file'], 'utf8')
+    json = fs.readFileSync(args['--file'], 'utf8');
 } else {
     if (args._.length < 1) {
         console.error('you need to provide a nexrender job json as an argument');
@@ -184,7 +185,6 @@ if (args['--file']) {
 }
 
 let parsedJob;
-
 try {
     parsedJob = JSON.parse(json)
 } catch (err) {
